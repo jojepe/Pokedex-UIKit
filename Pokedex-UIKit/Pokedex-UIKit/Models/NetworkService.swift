@@ -28,33 +28,39 @@ class NetworkService {
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
 
             if let error = error {
-                completion(.failure(.requestFailed(error)))
+                DispatchQueue.main.async {
+                    completion(.failure(.requestFailed(error)))
+                }
                 return
             }
 
             guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
-                completion(.failure(.invalidResponse))
+                DispatchQueue.main.async {
+                    completion(.failure(.invalidResponse))
+                }
                 return
             }
 
             guard let data = data else {
-                completion(.failure(.invalidResponse))
+                DispatchQueue.main.async {
+                    completion(.failure(.invalidResponse))
+                }
                 return
             }
 
             do {
                 let pokemonResponse = try JSONDecoder().decode(PokemonListResponse.self, from: data)
                 DispatchQueue.main.async {
-                    //completion(.success(pokemonResponse.results))
+                    completion(.success(pokemonResponse.results))
                 }
             } catch {
-                completion(.failure(.decodingError(error)))
+                DispatchQueue.main.async {
+                    completion(.failure(.decodingError(error)))
+                }
             }
         }
 
         task.resume()
     }
     
-    // Futuramente, adicionaremos uma função para buscar detalhes de um Pokémon
-    // func fetchPokemonDetails(for id: Int, completion: @escaping (Result<PokemonDetail, NetworkError>) -> Void) {... }
 }

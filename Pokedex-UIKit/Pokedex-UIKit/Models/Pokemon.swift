@@ -17,6 +17,6 @@ struct Pokemon: Codable, Identifiable {
 }
 
 struct PokemonListResponse: Codable {
-    let result: [Pokemon]
+    let results: [Pokemon]
 }
 
